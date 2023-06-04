@@ -16,6 +16,10 @@
 
 - Markdown Mermaid - Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview.
 
+## Necessário instalar:
+- Dotnet 7.0
+- Suporte a migrations: > dotnet tool install --global dotnet-ef
+
 ## Problema:
 
 Localizar de forma simples pontos específicos de interesse em comum, como por exemplo: Colmeias de abelhas.
@@ -28,9 +32,9 @@ Construir um app que seja orientado por API que possibilite informa um ponto de 
 
 - [x] - Criar o projeto
 - [ ] - Criar categorias
-    - [ ] - Configurar banco de dados
-        - [ ] - Adicionar e Configurar Postgres no docker-compose
-        - [ ] - Configurar conexão na camada de infrastructure
+    - [x] - Configurar banco de dados
+        - [x] - Adicionar e Configurar Postgres no docker-compose
+        - [x] - Configurar conexão na camada de infrastructure
     - [ ] - Criar repository
     - [ ] - Criar testes de repositório
     - [ ] - Criar domínios

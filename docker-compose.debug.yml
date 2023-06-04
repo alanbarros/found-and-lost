@@ -3,6 +3,16 @@
 version: '3.4'
 
 services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: found&lost
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
   webapi:
     image: webapi
     build:
@@ -14,3 +24,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ~/.vsdbg:/remote_debugger:rw
+    depends_on:
+      - db
+    networks:
+      - backend
+      - frontend
+
+networks:
+  backend:
+  frontend:

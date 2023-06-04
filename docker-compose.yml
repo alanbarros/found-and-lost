@@ -3,6 +3,16 @@
 version: '3.4'
 
 services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: found&lost
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
   webapi:
     image: webapi
     build:
@@ -10,3 +20,12 @@ services:
       dockerfile: src/WebAPI/Dockerfile
     ports:
       - 5253:5253
+    depends_on:
+      - db
+    networks:
+      - backend
+      - frontend
+
+networks:
+  backend:
+  frontend:
