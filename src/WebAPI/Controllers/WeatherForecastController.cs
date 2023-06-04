@@ -8,7 +8,6 @@ namespace WebAPI.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly WeatherForecastPresenter _presenter;
     private readonly IWeatherForecastUseCase _useCase;

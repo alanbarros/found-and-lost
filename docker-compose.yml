@@ -4,6 +4,7 @@ version: '3.4'
 
 services:
   db:
+    hostname: banco_dados
     image: postgres
     restart: always
     environment:
