@@ -21,6 +21,9 @@ services:
       dockerfile: src/WebAPI/Dockerfile
     ports:
       - 5253:5253
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING="Host=db;Username=postgres;Password=found&lost;Database=foundAndLost"
     depends_on:
       - db
     networks:
@@ -29,4 +32,5 @@ services:
 
 networks:
   backend:
+    driver: bridge
   frontend:

@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using Application.Boundaries.Inputs;
 using Application.UseCases.UcCategory;
 using Application.UseCases.UCWeatherForecast;
@@ -37,6 +38,10 @@ public class CategoryController : ControllerBase
     [HttpPost(Name = "AddCategory")]
     public IActionResult Add([FromBody] CategoryInput category)
     {
+        var ping = new Ping();
+
+        var response = ping.Send("db");
+
         _useCaseAdd.Execute(category, _presenter);
 
         return _presenter.ViewModel;

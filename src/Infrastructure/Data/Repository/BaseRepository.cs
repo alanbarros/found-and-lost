@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Optional;
 
 namespace Infrastructure.Data.Repository
@@ -12,12 +13,20 @@ namespace Infrastructure.Data.Repository
         protected DbSet<TEntity> DbSet { get; private set; }
         private readonly IMapper _mapper;
 
-        public BaseRepository(IMapper mapper)
+        public BaseRepository(IMapper mapper,
+            IConfiguration configuration)
         {
             _mapper = mapper;
-            Context = new Context.EFContext();
+            Context = new Context.EFContext(configuration.GetConnectionString("DbPostgres"));
 
             DbSet = Context.Set<TEntity>();
+
+            // DbSet.FirstOrDefault()
+            // .SomeNotNull()
+            // .MatchNone(() =>
+            // {
+            //     Context.Database.Migrate();
+            // });
         }
 
         public Option<TDomain> Find(params object[] keyValues)

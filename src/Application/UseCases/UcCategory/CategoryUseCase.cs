@@ -16,10 +16,11 @@ namespace Application.UseCases.UcCategory
 
         public void Execute(string input, IOutputPort<Category> outputPort)
         {
-            repository.Find(input)
-            .Match(
-                some: category => outputPort.Standard(category),
-                none: () => outputPort.Fail()
+            repository
+                .Find(input)
+                .Match(
+                    some: category => outputPort.Standard(category),
+                    none: () => outputPort.Fail()
                 );
         }
 
