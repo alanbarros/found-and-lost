@@ -1,11 +1,10 @@
 using Application.Boundaries;
 using Domain;
-using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPI.Controllers
+namespace found_and_lost.Controllers
 {
-    public class CategoryPresenter : IOutputPort<Category>
+    public class WeatherForecastPresenter : IOutputPort<List<WeatherForecast>>
     {
         public IActionResult ViewModel { get; private set; } = new BadRequestResult();
 
@@ -14,7 +13,7 @@ namespace WebAPI.Controllers
             ViewModel = new BadRequestResult();
         }
 
-        public void Standard(Category output)
+        public void Standard(List<WeatherForecast> output)
         {
             ViewModel = new OkObjectResult(output);
         }

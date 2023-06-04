@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  found-and-lost:
+    image: ${DOCKER_REGISTRY-}foundandlost
+    build:
+      context: .
+      dockerfile: found-and-lost/Dockerfile
+    depends_on:
+      - db
+    environment:
+      - CONNECTION_STRING="Host=db;Username=postgres;Password=found&lost;Database=foundAndLost"
+    networks:
+      - backend
+      - frontend
+
+  db:
+    hostname: banco_dados
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: found&lost
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+  frontend:

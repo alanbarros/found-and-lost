@@ -1,4 +1,5 @@
 using AutoMapper;
+using Infrastructure.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Optional;
 
@@ -18,6 +19,11 @@ namespace Infrastructure.Data.Repository
             Context = new Context.EFContext();
 
             DbSet = Context.Set<TEntity>();
+
+            this.Context.Set<Category>()
+                .FirstOrDefault()
+                .SomeNotNull()
+                .MatchNone(() => Context.Database.Migrate());
         }
 
         public Option<TDomain> Find(params object[] keyValues)
