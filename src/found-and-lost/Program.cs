@@ -16,6 +16,7 @@ builder.Services.AddScoped<CategoryPresenter>();
 //builder.Services.AddMappingProfiles();
 builder.Services.AddAutoMapper(typeof(DependencyInjectionExtensions).Assembly);
 builder.Services.AddRepositories();
+builder.Services.ConfigureDatabase();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

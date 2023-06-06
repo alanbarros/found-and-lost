@@ -4,6 +4,7 @@ services:
   found-and-lost:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - TESTE=Teste
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - CONNECTION_STRING="Host=db;Username=postgres;Password=found&lost;Database=foundAndLost"
     ports:

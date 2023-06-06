@@ -20,10 +20,21 @@ namespace Infrastructure.Data.Repository
 
             DbSet = Context.Set<TEntity>();
 
-            this.Context.Set<Category>()
-                .FirstOrDefault()
-                .SomeNotNull()
-                .MatchNone(() => Context.Database.Migrate());
+            Option<bool> VerificarDataBase()
+            {
+                try
+                {
+                    return this.Context.Set<Category>()
+                        .Any()
+                        .SomeNotNull();
+                }
+                catch
+                {
+                    return Option.None<bool>();
+                }
+            }
+
+            VerificarDataBase().MatchNone(() => Context.Database.Migrate());
         }
 
         public Option<TDomain> Find(params object[] keyValues)

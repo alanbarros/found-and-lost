@@ -1,5 +1,6 @@
 using Application.Repository;
 using AutoMapper;
+using Infrastructure.Data.Context;
 using Infrastructure.Data.Repository;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +29,13 @@ public static class DependencyInjectionExtensions
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureDatabase(this IServiceCollection services)
+    {
+        var _ = EFContext.CreateAndMigrate();
 
         return services;
     }

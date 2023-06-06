@@ -8,8 +8,6 @@ services:
       dockerfile: found-and-lost/Dockerfile
     depends_on:
       - db
-    environment:
-      - CONNECTION_STRING="Host=db;Username=postgres;Password=found&lost;Database=foundAndLost"
     networks:
       - backend
       - frontend
