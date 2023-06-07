@@ -8,7 +8,7 @@
             "name": ".NET Core Launch (web)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "execute local",
             "program": "${workspaceFolder}/src/found-and-lost/bin/Debug/net6.0/found-and-lost.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/found-and-lost",
@@ -18,7 +18,8 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "CONNECTION_STRING": "Host=localhost;Username=postgres;Password=found&lost;Database=foundAndLost"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

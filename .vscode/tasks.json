@@ -90,10 +90,9 @@
                 "docker-build: debug"
             ],
             "dockerRun": {
-                "env": {
-                    "CONNECTION_STRING": "Host=localhost;Username=postgres;Password=found&lost;Database=foundAndLost",
-                    "ASPNETCORE_ENVIRONMENT": "Development"
-                }
+                "envFiles": [
+                    "${workspaceFolder}/src/dev.env"
+                ]
             },
             "netCore": {
                 "appProject": "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj",
@@ -141,6 +140,31 @@
             "windows": {
                 "command": "powershell .\\.vscode\\script.ps1"
             }
+        },
+        {
+            "type": "shell",
+            "label": "compose-up-db",
+            "command": "docker-compose -f src/docker-compose.db.yml up -d",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "compose-down-db",
+            "command": "docker-compose -f src/docker-compose.db.yml down",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "execute local",
+            "dependsOn": [
+                "build",
+                "compose-up-db"
+            ]
         }
     ]
 }

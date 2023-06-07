@@ -2,6 +2,7 @@ using Application.UseCases.UcCategory;
 using Application.UseCases.UCWeatherForecast;
 using found_and_lost.Controllers;
 using Infrastructure.DI;
+using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+var option = new RewriteOptions();
+option.AddRedirect("^$", "swagger");
+app.UseRewriter(option);
 
 app.MapControllers();
 

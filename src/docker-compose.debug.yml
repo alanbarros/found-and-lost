@@ -5,9 +5,9 @@ services:
     build:
       context: .
       dockerfile: found-and-lost/debug.Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - CONNECTION_STRING="Host=db;Username=postgres;Password=found&lost;Database=foundAndLost"
+    env_file:
+      - .env/dev.env
+      - .env/dev.container.env
     ports:
       - "5000:5000"
     volumes:
