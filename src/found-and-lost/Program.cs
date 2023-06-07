@@ -14,8 +14,7 @@ builder.Services.AddScoped<IAddCategoryUseCase, CategoryUseCase>();
 builder.Services.AddScoped<IFindCategoryUseCase, CategoryUseCase>();
 builder.Services.AddScoped<CategoryPresenter>();
 
-//builder.Services.AddMappingProfiles();
-builder.Services.AddAutoMapper(typeof(DependencyInjectionExtensions).Assembly);
+builder.Services.AddMappingProfiles();
 builder.Services.AddRepositories();
 builder.Services.ConfigureDatabase();
 

@@ -16,7 +16,7 @@ namespace Application.UseCases.UcCategory
 
         public void Execute(string input, IOutputPort<Category> outputPort)
         {
-            repository.Find(input)
+            repository.Find(c => c.Name.Contains(input))
             .Match(
                 some: category => outputPort.Standard(category),
                 none: () => outputPort.Fail()

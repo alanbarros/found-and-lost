@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Infrastructure.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,20 @@ namespace Infrastructure.Data.Repository
             VerificarDataBase().MatchNone(() => Context.Database.Migrate());
         }
 
-        public Option<TDomain> Find(params object[] keyValues)
+        public Option<TDomain> Find(Guid id)
         {
-            var result = DbSet.Find(keyValues);
+            var result = DbSet.Find(id);
+
+            var mappedResult = _mapper.Map<TEntity, TDomain>(result);
+
+            return mappedResult.SomeNotNull();
+        }
+
+        public Option<TDomain> Find(Expression<Func<TDomain, bool>> predicado)
+        {
+            var mapPredicado = _mapper.Map<Expression<Func<TEntity, bool>>>(predicado);
+
+            var result = DbSet.FirstOrDefault(mapPredicado);
 
             var mappedResult = _mapper.Map<TEntity, TDomain>(result);
 

@@ -1,5 +1,6 @@
 using Application.Repository;
 using AutoMapper;
+using AutoMapper.Extensions.ExpressionMapping;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repository;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,8 @@ public static class DependencyInjectionExtensions
             {
                 cfg.AddProfile(Activator.CreateInstance(profile) as Profile);
             }
+
+            cfg.AddExpressionMapping();
         });
 
         services.AddSingleton<IMapper>(configuration.CreateMapper());
