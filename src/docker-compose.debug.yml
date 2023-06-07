@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  found-and-lost:
+    build:
+      context: .
+      dockerfile: found-and-lost/debug.Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING="Host=db;Username=postgres;Password=found&lost;Database=foundAndLost"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ../src:/src
+      - ${HOME}/.vsdbg/linux-x64/latest:/vsdbg

@@ -2,12 +2,24 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "restore",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "restore",
+                "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/WebAPI/WebAPI.csproj",
+                "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +31,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/src/WebAPI/WebAPI.csproj",
+                "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +45,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/WebAPI/WebAPI.csproj"
+                "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -46,12 +58,12 @@
             "dockerBuild": {
                 "tag": "docachadoseperdidos:dev",
                 "target": "base",
-                "dockerfile": "${workspaceFolder}/src/WebAPI/Dockerfile",
+                "dockerfile": "${workspaceFolder}/src/found-and-lost/Dockerfile",
                 "context": "${workspaceFolder}",
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/src/WebAPI/WebAPI.csproj"
+                "appProject": "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj"
             }
         },
         {
@@ -62,13 +74,13 @@
             ],
             "dockerBuild": {
                 "tag": "docachadoseperdidos:latest",
-                "dockerfile": "${workspaceFolder}/src/WebAPI/Dockerfile",
+                "dockerfile": "${workspaceFolder}/src/found-and-lost/Dockerfile",
                 "context": "${workspaceFolder}",
                 "platform": "linux/amd64",
                 "pull": true
             },
             "netCore": {
-                "appProject": "${workspaceFolder}/src/WebAPI/WebAPI.csproj"
+                "appProject": "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj"
             }
         },
         {
@@ -77,9 +89,14 @@
             "dependsOn": [
                 "docker-build: debug"
             ],
-            "dockerRun": {},
+            "dockerRun": {
+                "env": {
+                    "CONNECTION_STRING": "Host=localhost;Username=postgres;Password=found&lost;Database=foundAndLost",
+                    "ASPNETCORE_ENVIRONMENT": "Development"
+                }
+            },
             "netCore": {
-                "appProject": "${workspaceFolder}/src/WebAPI/WebAPI.csproj",
+                "appProject": "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj",
                 "enableDebugging": true
             }
         },
@@ -91,7 +108,38 @@
             ],
             "dockerRun": {},
             "netCore": {
-                "appProject": "${workspaceFolder}/src/WebAPI/WebAPI.csproj"
+                "appProject": "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "compose-down-dev",
+            "command": "docker-compose -f src/docker-compose.yml -f src/docker-compose.debug.yml down",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "type": "shell",
+            "label": "compose-up-dev",
+            "dependsOn": "compose-down-dev",
+            "command": "docker-compose -f src/docker-compose.yml -f src/docker-compose.debug.yml up -d --build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Install Vsdbg",
+            "type": "shell",
+            "dependsOn": [
+                "compose-up-dev",
+                "restore"
+            ],
+            "command": "if [ ! -e ../vsdbg/ ]; then curl -sSL https://aka.ms/getvsdbgsh | /bin/sh /dev/stdin -v latest -l ../vsdbg; fi",
+            "windows": {
+                "command": "powershell .\\.vscode\\script.ps1"
             }
         }
     ]

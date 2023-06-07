@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   found-and-lost:
+    container_name: container-webapi
     image: ${DOCKER_REGISTRY-}foundandlost
     build:
       context: .

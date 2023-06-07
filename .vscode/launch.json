@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/WebAPI/bin/Debug/net7.0/WebAPI.dll",
+            "program": "${workspaceFolder}/src/found-and-lost/bin/Debug/net6.0/found-and-lost.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/WebAPI",
+            "cwd": "${workspaceFolder}/src/found-and-lost",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -35,7 +35,28 @@
             "request": "launch",
             "preLaunchTask": "docker-run: debug",
             "netCore": {
-                "appProject": "${workspaceFolder}/src/WebAPI/WebAPI.csproj"
+                "appProject": "${workspaceFolder}/src/found-and-lost/found-and-lost.csproj"
+            }
+        },
+        {
+            "name": ".NET Core Docker Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickRemoteProcess}",
+            "preLaunchTask": "Install Vsdbg",
+            "pipeTransport": {
+                "pipeProgram": "docker",
+                "pipeArgs": [
+                    "exec",
+                    "-i",
+                    "container-webapi" // Nome do container
+                ],
+                "debuggerPath": "/vsdbg/vsdbg", // Localização do debugger dentro do container
+                "pipeCwd": "${workspaceRoot}/src/found-and-lost", // Caminho do projeto executavel no vscode
+                "quoteArgs": false
+            },
+            "sourceFileMap": {
+                "/src": "${workspaceRoot}/src" // Vinculo do projeto no container e no vscode
             }
         }
     ]
