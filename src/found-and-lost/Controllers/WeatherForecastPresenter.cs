@@ -13,6 +13,11 @@ namespace found_and_lost.Controllers
             ViewModel = new BadRequestResult();
         }
 
+        public void NotFound()
+        {
+            ViewModel = new NotFoundResult();
+        }
+
         public void Standard(List<WeatherForecast> output)
         {
             ViewModel = new OkObjectResult(output);

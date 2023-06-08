@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.UseCases.UcCategory
 {
-    public interface IAddCategoryUseCase : IUseCase<CategoryInput, Category>
+    public interface IAddCategoryUseCase : IUseCase<AddCategoryRequest, Category>
     {
 
     }

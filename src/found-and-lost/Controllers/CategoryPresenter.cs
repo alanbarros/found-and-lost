@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace found_and_lost.Controllers
 {
-    public class CategoryPresenter : IOutputPort<Category>
+    public class CategoryPresenter :
+        IOutputPort<Category>,
+        IOutputPort<Category, Exception>,
+        IOutputPort<string, Exception>
     {
         public IActionResult ViewModel { get; private set; } = new BadRequestResult();
 
@@ -13,7 +16,22 @@ namespace found_and_lost.Controllers
             ViewModel = new BadRequestResult();
         }
 
+        public void Fail(Exception exception)
+        {
+            ViewModel = new BadRequestObjectResult(exception.Message);
+        }
+
+        public void NotFound()
+        {
+            ViewModel = new NotFoundResult();
+        }
+
         public void Standard(Category output)
+        {
+            ViewModel = new OkObjectResult(output);
+        }
+
+        public void Standard(string output)
         {
             ViewModel = new OkObjectResult(output);
         }

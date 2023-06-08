@@ -10,6 +10,8 @@ namespace Infrastructure.Data.Repository
         where TEntity : Entities.DefaultDbEntity<TDomain>
         where TDomain : Domain.Entities.BaseDomain
     {
+        const string NOT_FOUND_MESSAGE = "A categoria com a chave informada não foi localizada no banco de dados";
+
         protected DbContext Context { get; private set; }
         protected DbSet<TEntity> DbSet { get; private set; }
         private readonly IMapper _mapper;
@@ -80,7 +82,7 @@ namespace Infrastructure.Data.Repository
             return result.SomeWhen(x => x > 0);
         }
 
-        public Option<TDomain> Update(Guid id, TDomain domain) =>
+        public Option<TDomain, Exception> Update(Guid id, TDomain domain) =>
         DbSet.Find(id).SomeNotNull().Match(
             some: (dbEntity) =>
             {
@@ -93,14 +95,33 @@ namespace Infrastructure.Data.Repository
                     Context.SaveChanges();
                     domain = _mapper.Map<TEntity, TDomain>(dbEntity);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return Option.None<TDomain>();
+                    return Option.None<TDomain, Exception>(new DbUpdateException(ex.Message));
                 }
 
-                return domain.Some();
+                return domain.Some<TDomain, Exception>();
             },
-            () => Option.None<TDomain>()
+            () => Option.None<TDomain, Exception>(
+                new KeyNotFoundException(NOT_FOUND_MESSAGE))
         );
+
+        public Option<bool, Exception> Delete(Guid id) =>
+        DbSet.Find(id).SomeNotNull()
+        .Match(some: (dbEntity) =>
+        {
+            try
+            {
+                DbSet.Remove(dbEntity);
+                Context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return Option.None<bool, Exception>(ex);
+            }
+
+            return Option.Some<bool, Exception>(true);
+        }, none: () => Option.None<bool, Exception>(
+            new KeyNotFoundException(NOT_FOUND_MESSAGE)));
     }
 }

@@ -7,7 +7,6 @@ public class Category : DefaultDbEntity<Domain.Entities.Category>
 
     public override void Update(Domain.Entities.Category domain)
     {
-        this.Name = domain.Name;
         this.Description = domain.Description;
     }
 }

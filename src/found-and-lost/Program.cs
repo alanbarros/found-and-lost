@@ -13,6 +13,7 @@ builder.Services.AddScoped<WeatherForecastPresenter>();
 builder.Services.AddScoped<IAddCategoryUseCase, CategoryUseCase>();
 builder.Services.AddScoped<IFindCategoryUseCase, CategoryUseCase>();
 builder.Services.AddScoped<IUpdateCategoryUseCase, CategoryUseCase>();
+builder.Services.AddScoped<IDeleteCategoryUseCase, CategoryUseCase>();
 builder.Services.AddScoped<CategoryPresenter>();
 
 builder.Services.AddMappingProfiles();

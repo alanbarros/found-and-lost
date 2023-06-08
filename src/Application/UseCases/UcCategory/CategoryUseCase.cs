@@ -1,5 +1,4 @@
 using Application.Boundaries;
-using Application.Boundaries.Inputs;
 using Application.Repository;
 using AutoMapper;
 using Domain.Entities;
@@ -9,7 +8,8 @@ namespace Application.UseCases.UcCategory
     public class CategoryUseCase :
         IFindCategoryUseCase,
         IAddCategoryUseCase,
-        IUpdateCategoryUseCase
+        IUpdateCategoryUseCase,
+        IDeleteCategoryUseCase
     {
         private readonly ICategoryRepository _repository;
         private readonly IMapper _mapper;
@@ -21,29 +21,24 @@ namespace Application.UseCases.UcCategory
             _repository = repository;
         }
 
-        public void Execute(string input, IOutputPort<Category> outputPort)
-        {
-            _repository.Find(c => c.Name.Contains(input))
-            .Match(
-                some: category => outputPort.Standard(category),
-                none: () => outputPort.Fail()
-                );
-        }
+        public void Execute(FindCategoryRequest request, IOutputPort<Category> outputPort) =>
+            _repository.Find(c => c.Name.Contains(request.CategoryName))
+            .Match(some: category => outputPort.Standard(category),
+            none: () => outputPort.NotFound());
 
-        public void Execute(CategoryInput input, IOutputPort<Category> outputPort)
-        {
-            var category = _mapper.Map<CategoryInput, Category>(input);
+        public void Execute(AddCategoryRequest request, IOutputPort<Category> outputPort) =>
+            _repository.Add(request.Category)
+            .Match(some: (_) => outputPort.Standard(request.Category),
+            none: () => outputPort.Fail());
 
-            _repository.Add(category)
-                .Match(
-                    some: (_) => outputPort.Standard(category),
-                    none: () => outputPort.Fail()
-                );
-        }
+        public void Execute(UpdateCategoryRequest request, IOutputPort<Category, Exception> outputPort) =>
+            _repository.Update(request.IdCategory, request.Category)
+            .Match(some: (category) => outputPort.Standard(category),
+            none: (ex) => outputPort.Fail(ex));
 
-        public void Execute(Category input, IOutputPort<Category> outputPort) =>
-            _repository.Update(input.Id, input).Match(
-                some: (category) => outputPort.Standard(category),
-                none: () => outputPort.Fail());
+        public void Execute(DeleteCategoryRequest request, IOutputPort<string, Exception> outputPort) =>
+            _repository.Delete(request.CategoryId)
+            .Match(some: (_) => outputPort.Standard("Removido com sucesso"),
+            none: (ex) => outputPort.Fail(ex));
     }
 }

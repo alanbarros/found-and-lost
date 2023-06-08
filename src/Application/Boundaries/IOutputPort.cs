@@ -1,18 +1,16 @@
 namespace Application.Boundaries;
 
 public interface IOutputPort<TOutput>
-    where TOutput : class
 {
     void Standard(TOutput output);
 
     void Fail();
+
+    void NotFound();
 }
 
-public interface IOutputPort<TOutput, TException>
-    where TOutput : class
+public interface IOutputPort<TOutput, TException> : IOutputPort<TOutput>
     where TException : Exception
 {
-    void Standard(TOutput output);
-
     void Fail(TException exception);
 }

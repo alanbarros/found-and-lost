@@ -8,10 +8,11 @@ public interface IUseCase<TOutput>
     void Execute(IOutputPort<TOutput> outputPort);
 }
 
-public interface IUseCase<TInput, TOutput>
+public interface IUseCase<TRequest, TOutput>
     where TOutput : class
+    where TRequest : BaseRequest
 {
-    void Execute(TInput input, IOutputPort<TOutput> outputPort);
+    void Execute(TRequest input, IOutputPort<TOutput> outputPort);
 }
 
 public interface IUseCase<TRequest, TOutput, TException>
@@ -20,4 +21,11 @@ public interface IUseCase<TRequest, TOutput, TException>
     where TException : Exception
 {
     void Execute(TRequest request, IOutputPort<TOutput, TException> outputPort);
+}
+
+public interface IDeleteUseCase<TRequest, TException>
+    where TRequest : BaseRequest
+    where TException : Exception
+{
+    void Execute(TRequest request, IOutputPort<string, Exception> outputPort);
 }

@@ -10,6 +10,8 @@ namespace Application.Repository
         Option<int> Add(TDomain domain);
         Option<int> AddRange(IEnumerable<TDomain> domain);
 
-        Option<TDomain> Update(Guid id, TDomain domain);
+        Option<TDomain, Exception> Update(Guid id, TDomain domain);
+
+        Option<bool, Exception> Delete(Guid id);
     }
 }
