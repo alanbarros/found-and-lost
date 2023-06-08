@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.Configuration
 {
-    public class CategoryConfiguration : BaseConfiguration<Category>
+    public class CategoryConfiguration : BaseConfiguration<Category, Domain.Entities.Category>
     {
         public override void Configure(EntityTypeBuilder<Category> builder)
         {

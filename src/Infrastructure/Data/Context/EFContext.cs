@@ -15,13 +15,13 @@ public class EFContext : DbContext
         var connectionString = Uteis.GetEnvironmentVariableWithoutQuotes("CONNECTION_STRING");
 
         optionsBuilder
-                .UseNpgsql(connectionString, 
+                .UseNpgsql(connectionString,
                 db => db.MigrationsHistoryTable("__FoundLostMigrationsHistory", "achados"));
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BaseConfiguration<>).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BaseConfiguration<,>).Assembly);
     }
 
     public static DbContext CreateAndMigrate()

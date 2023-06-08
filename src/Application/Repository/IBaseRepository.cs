@@ -9,5 +9,7 @@ namespace Application.Repository
         Option<TDomain> Find(Expression<Func<TDomain, bool>> predicado);
         Option<int> Add(TDomain domain);
         Option<int> AddRange(IEnumerable<TDomain> domain);
+
+        Option<TDomain> Update(Guid id, TDomain domain);
     }
 }

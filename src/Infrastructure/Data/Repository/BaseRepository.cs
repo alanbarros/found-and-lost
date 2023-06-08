@@ -7,7 +7,7 @@ using Optional;
 namespace Infrastructure.Data.Repository
 {
     public abstract class BaseRepository<TEntity, TDomain>
-        where TEntity : Entities.DefaultDbEntity
+        where TEntity : Entities.DefaultDbEntity<TDomain>
         where TDomain : Domain.Entities.BaseDomain
     {
         protected DbContext Context { get; private set; }
@@ -79,5 +79,28 @@ namespace Infrastructure.Data.Repository
 
             return result.SomeWhen(x => x > 0);
         }
+
+        public Option<TDomain> Update(Guid id, TDomain domain) =>
+        DbSet.Find(id).SomeNotNull().Match(
+            some: (dbEntity) =>
+            {
+                dbEntity.UpdatedAt = DateTime.UtcNow;
+                dbEntity.Update(domain);
+                DbSet.Update(dbEntity);
+
+                try
+                {
+                    Context.SaveChanges();
+                    domain = _mapper.Map<TEntity, TDomain>(dbEntity);
+                }
+                catch
+                {
+                    return Option.None<TDomain>();
+                }
+
+                return domain.Some();
+            },
+            () => Option.None<TDomain>()
+        );
     }
 }
