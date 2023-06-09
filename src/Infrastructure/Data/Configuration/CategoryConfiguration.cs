@@ -14,6 +14,8 @@ namespace Infrastructure.Data.Configuration
 
             builder.HasAlternateKey(p => p.Name);
 
+            builder.Property(p => p.ParentId).IsRequired(false);
+
             builder.Property(a => a.Description)
                 .IsRequired()
                 .HasMaxLength(50);

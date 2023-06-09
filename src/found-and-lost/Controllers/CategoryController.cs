@@ -8,14 +8,14 @@ namespace found_and_lost.Controllers;
 [Route("[controller]/[action]")]
 public class CategoryController : ControllerBase
 {
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<CategoryController> _logger;
     private readonly CategoryPresenter _presenter;
     private readonly IAddCategoryUseCase _useCaseAdd;
     private readonly IFindCategoryUseCase _useCaseFind;
     private readonly IUpdateCategoryUseCase _useCaseUpdate;
     private readonly IDeleteCategoryUseCase _useCaseDelete;
 
-    public CategoryController(ILogger<WeatherForecastController> logger,
+    public CategoryController(ILogger<CategoryController> logger,
      CategoryPresenter presenter,
      IAddCategoryUseCase useCaseAdd,
      IFindCategoryUseCase useCaseFind,
@@ -30,20 +30,20 @@ public class CategoryController : ControllerBase
         _useCaseDelete = useCaseDelete;
     }
 
-    [HttpGet]
-    public IActionResult Get([FromQuery] string name)
+    [HttpPost]
+    public IActionResult Create([FromBody] CategoryInput categoryInput)
     {
-        var request = new FindCategoryRequest(name);
-        _useCaseFind.Execute(request, _presenter);
+        var request = new AddCategoryRequest(categoryInput);
+        _useCaseAdd.Execute(request, _presenter);
 
         return _presenter.ViewModel;
     }
 
-    [HttpPost]
-    public IActionResult Add([FromBody] CategoryInput categoryInput)
+    [HttpGet]
+    public IActionResult Read([FromQuery] string name)
     {
-        var request = new AddCategoryRequest(categoryInput);
-        _useCaseAdd.Execute(request, _presenter);
+        var request = new FindCategoryRequest(name);
+        _useCaseFind.Execute(request, _presenter);
 
         return _presenter.ViewModel;
     }

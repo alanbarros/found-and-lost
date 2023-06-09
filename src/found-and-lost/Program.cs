@@ -1,24 +1,10 @@
-using Application.UseCases.UcCategory;
-using Application.UseCases.UCWeatherForecast;
-using found_and_lost.Controllers;
-using Infrastructure.DI;
+using found_and_lost;
 using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IWeatherForecastUseCase, WeatherForecastUseCase>();
-builder.Services.AddScoped<WeatherForecastPresenter>();
-
-builder.Services.AddScoped<IAddCategoryUseCase, CategoryUseCase>();
-builder.Services.AddScoped<IFindCategoryUseCase, CategoryUseCase>();
-builder.Services.AddScoped<IUpdateCategoryUseCase, CategoryUseCase>();
-builder.Services.AddScoped<IDeleteCategoryUseCase, CategoryUseCase>();
-builder.Services.AddScoped<CategoryPresenter>();
-
-builder.Services.AddMappingProfiles();
-builder.Services.AddRepositories();
-builder.Services.ConfigureDatabase();
+builder.Services.AddDependencies();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

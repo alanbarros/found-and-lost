@@ -28,13 +28,21 @@ public class EFContext : DbContext
     {
         var context = new EFContext();
 
+        var migrations = new List<string>()
+        {
+            "20230604000039_CreateDb",
+            "20230608224443_CategorySelfReferency"
+        };
+
         Option<bool> VerificarDataBase()
         {
             try
             {
-                return context.Set<Category>()
-                    .Any()
-                    .SomeNotNull();
+                var lastMigration = context.Database
+                .SqlQuery<string>($"select \"MigrationId\" FROM achados.\"__FoundLostMigrationsHistory\"")
+                .ToList();
+
+                return lastMigration.Contains(migrations.Last()).SomeWhen(exists => exists == true);
             }
             catch
             {
