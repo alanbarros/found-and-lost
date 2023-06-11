@@ -1,4 +1,6 @@
 using System.Linq.Expressions;
+using Application.Boundaries;
+using Application.Repository;
 using AutoMapper;
 using Infrastructure.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +8,7 @@ using Optional;
 
 namespace Infrastructure.Data.Repository
 {
-    public abstract class BaseRepository<TEntity, TDomain>
+    public abstract class BaseRepository<TEntity, TDomain> : IBaseRepository<TDomain>
         where TEntity : Entities.DefaultDbEntity<TDomain>
         where TDomain : Domain.Entities.BaseDomain
     {
@@ -123,5 +125,32 @@ namespace Infrastructure.Data.Repository
             return Option.Some<bool, Exception>(true);
         }, none: () => Option.None<bool, Exception>(
             new KeyNotFoundException(NOT_FOUND_MESSAGE)));
+
+        public PaginationOutput<TDomain> List(Expression<Func<TDomain, bool>> predicado, PaginationInput pagination)
+        {
+            var mapPredicado = _mapper.Map<Expression<Func<TEntity, bool>>>(predicado);
+
+            var entities = pagination.ItemsPerPage
+                .SomeWhen(x => x > 0)
+                .Match(
+                    some: (take) =>
+                    {
+                        return DbSet.Where(mapPredicado)
+                        .Skip(pagination.PageSkip())
+                        .Take(take)
+                        .ToList();
+                    },
+                    none: () => new List<TEntity>()
+                );
+
+            var totalItems = DbSet.LongCount();
+
+            var domains = _mapper.Map<List<TEntity>, List<TDomain>>(entities);
+
+            return new PaginationOutput<TDomain>(domains,
+                totalItems,
+                pagination.PageNumber,
+                pagination.ItemsPerPage);
+        }
     }
 }

@@ -1,5 +1,7 @@
+using Application.Boundaries;
 using Application.Boundaries.Inputs;
 using Domain.Entities;
+using Optional;
 
 namespace Application.UseCases.UcCategory;
 
@@ -48,5 +50,17 @@ public class DeleteCategoryRequest : BaseRequest
     {
         this.CategoryId = categoryId;
 
+    }
+}
+
+public class ListCategoryRequest : BaseRequest
+{
+    public Option<string> MaybeCategoryName { get; }
+    public PaginationInput Input { get; }
+
+    public ListCategoryRequest(PaginationInput input, string? categoryName = null)
+    {
+        this.Input = input;
+        MaybeCategoryName = categoryName is null ? Option.None<string>() : categoryName.Some();
     }
 }

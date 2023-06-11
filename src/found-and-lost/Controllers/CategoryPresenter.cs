@@ -7,7 +7,8 @@ namespace found_and_lost.Controllers
     public class CategoryPresenter :
         IOutputPort<Category>,
         IOutputPort<Category, Exception>,
-        IOutputPort<string, Exception>
+        IOutputPort<string, Exception>,
+        IOutputPort<PaginationOutput<Category>>
     {
         public IActionResult ViewModel { get; private set; } = new BadRequestResult();
 
@@ -32,6 +33,11 @@ namespace found_and_lost.Controllers
         }
 
         public void Standard(string output)
+        {
+            ViewModel = new OkObjectResult(output);
+        }
+
+        public void Standard(PaginationOutput<Category> output)
         {
             ViewModel = new OkObjectResult(output);
         }

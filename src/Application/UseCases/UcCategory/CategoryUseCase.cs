@@ -9,7 +9,8 @@ namespace Application.UseCases.UcCategory
         IFindCategoryUseCase,
         IAddCategoryUseCase,
         IUpdateCategoryUseCase,
-        IDeleteCategoryUseCase
+        IDeleteCategoryUseCase,
+        IListCategoryUseCase
     {
         private readonly ICategoryRepository _repository;
         private readonly IMapper _mapper;
@@ -40,5 +41,25 @@ namespace Application.UseCases.UcCategory
             _repository.Delete(request.CategoryId)
             .Match(some: (_) => outputPort.Standard("Removido com sucesso"),
             none: (ex) => outputPort.Fail(ex));
+
+        public void Execute(ListCategoryRequest input, IOutputPort<PaginationOutput<Category>> outputPort)
+        {
+            input.MaybeCategoryName.Match(
+                some: (categoryName) =>
+                {
+                    var items = _repository.List(c => c.Name.Contains(categoryName),
+                        input.Input);
+
+                    outputPort.Standard(items);
+                },
+                none: () =>
+                {
+                    var items = _repository.List(c => c.Name != null,
+                        input.Input);
+
+                    outputPort.Standard(items);
+                }
+            );
+        }
     }
 }

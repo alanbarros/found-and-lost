@@ -1,3 +1,4 @@
+using Application.Boundaries;
 using Domain.Entities;
 
 namespace Application.UseCases.UcCategory;
@@ -9,3 +10,5 @@ public interface IDeleteCategoryUseCase : IUseCase<DeleteCategoryRequest, string
 public interface IUpdateCategoryUseCase : IUseCase<UpdateCategoryRequest, Category, Exception> { }
 
 public interface IFindCategoryUseCase : IUseCase<FindCategoryRequest, Category> { }
+
+public interface IListCategoryUseCase : IUseCase<ListCategoryRequest, PaginationOutput<Category>> { }

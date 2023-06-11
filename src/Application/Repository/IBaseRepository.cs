@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Application.Boundaries;
 using Optional;
 
 namespace Application.Repository
@@ -13,5 +14,7 @@ namespace Application.Repository
         Option<TDomain, Exception> Update(Guid id, TDomain domain);
 
         Option<bool, Exception> Delete(Guid id);
+
+        PaginationOutput<TDomain> List(Expression<Func<TDomain, bool>> predicado, PaginationInput pagination);
     }
 }
