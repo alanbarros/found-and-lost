@@ -4,8 +4,8 @@ namespace Application.Boundaries;
 
 public class PaginationInput
 {
-    public int PageNumber { get; set; }
-    public int ItemsPerPage { get; set; }
+    public int PageNumber { get; set; } = 1;
+    public int ItemsPerPage { get; set; } = 15;
 
     public int PageSkip() => PageNumber.SomeWhen(x => x >= 0).Match((x) => x, () => 1) - 1;
 }
@@ -13,6 +13,11 @@ public class PaginationInput
 public class PaginationInputObject<T> : PaginationInput
 {
     public T Input { get; set; }
+
+    public PaginationInputObject(T input)
+    {
+        Input = input;
+    }
 }
 
 public class PaginationOutput<T> : PaginationInput

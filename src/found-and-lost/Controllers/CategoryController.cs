@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using Application.Boundaries;
 using Application.Boundaries.Inputs;
 using Application.UseCases.UcCategory;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 
 namespace found_and_lost.Controllers;
 
@@ -16,6 +19,7 @@ public class CategoryController : ControllerBase
     private readonly IUpdateCategoryUseCase _useCaseUpdate;
     private readonly IDeleteCategoryUseCase _useCaseDelete;
     private readonly IListCategoryUseCase _useCaseList;
+    private readonly IReadCategoryUseCase _useCaseRead;
 
     public CategoryController(ILogger<CategoryController> logger,
      CategoryPresenter presenter,
@@ -23,7 +27,8 @@ public class CategoryController : ControllerBase
      IFindCategoryUseCase useCaseFind,
      IUpdateCategoryUseCase useCaseUpdate,
      IDeleteCategoryUseCase useCaseDelete,
-     IListCategoryUseCase useCaseList)
+     IListCategoryUseCase useCaseList,
+     IReadCategoryUseCase useCaseRead)
     {
         _logger = logger;
         _presenter = presenter;
@@ -32,9 +37,12 @@ public class CategoryController : ControllerBase
         _useCaseUpdate = useCaseUpdate;
         _useCaseDelete = useCaseDelete;
         _useCaseList = useCaseList;
+        _useCaseRead = useCaseRead;
     }
 
     [HttpPost]
+    [ProducesResponseType(statusCode: 400, type: typeof(ValidationProblemDetails))]
+    [ProducesResponseType(statusCode: 200, type: typeof(Category))]
     public IActionResult Create([FromBody] CategoryInput categoryInput)
     {
         var request = new AddCategoryRequest(categoryInput);
@@ -43,36 +51,51 @@ public class CategoryController : ControllerBase
         return _presenter.ViewModel;
     }
 
-    [HttpGet]
-    public IActionResult Read([FromQuery] string name)
+    /// <summary>
+    /// Buscar por categorias através no nome.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpGet("{categoryId}")]
+    [ProducesResponseType(statusCode: 200, type: typeof(Category))]
+    [ProducesResponseType(statusCode: 404)]
+    public IActionResult Read(Guid categoryId)
     {
-        var request = new FindCategoryRequest(name);
-        _useCaseFind.Execute(request, _presenter);
+        var request = new ReadCategoryRequest(categoryId);
+        _useCaseRead.Execute(request, _presenter);
 
         return _presenter.ViewModel;
     }
 
-    [HttpPut]
+    [HttpPut("{categoryId}")]
+    [ProducesResponseType(statusCode: 200, type: typeof(Category))]
+    [ProducesResponseType(statusCode: 404)]
+    [ProducesResponseType(statusCode: 400, type: typeof(ValidationProblemDetails))]
     public IActionResult Update(
-        [FromQuery] Guid id,
-        [FromQuery] string description)
+        Guid categoryId,
+        [FromForm]
+        string description)
     {
-        var category = new UpdateCategoryRequest(id, description);
+        var category = new UpdateCategoryRequest(categoryId, description);
         _useCaseUpdate.Execute(category, _presenter);
 
         return _presenter.ViewModel;
     }
 
-    [HttpDelete]
-    public IActionResult Delete([FromQuery] Guid id)
+    [HttpDelete("{categoryId}")]
+    [ProducesResponseType(statusCode: 404)]
+    [ProducesResponseType(statusCode: 200)]
+    public IActionResult Delete(Guid categoryId)
     {
-        var category = new DeleteCategoryRequest(id);
+        var category = new DeleteCategoryRequest(categoryId);
         _useCaseDelete.Execute(category, _presenter);
 
         return _presenter.ViewModel;
     }
 
     [HttpPost]
+    [ProducesResponseType(statusCode: 200, type: typeof(IEnumerable<Category>))]
+    [ProducesResponseType(statusCode: 400, type: typeof(ValidationProblemDetails))]
     public IActionResult ListAll(
         [FromBody] PaginationInput paginationInput)
     {
@@ -83,6 +106,8 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(statusCode: 200, type: typeof(IEnumerable<Category>))]
+    [ProducesResponseType(statusCode: 400, type: typeof(ValidationProblemDetails))]
     public IActionResult ListByName(
         [FromBody] PaginationInputObject<ListCategoryByNameInput> paginationInput)
     {

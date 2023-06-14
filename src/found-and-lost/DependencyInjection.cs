@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<IUpdateCategoryUseCase, CategoryUseCase>();
         services.AddScoped<IDeleteCategoryUseCase, CategoryUseCase>();
         services.AddScoped<IListCategoryUseCase, CategoryUseCase>();
+        services.AddScoped<IReadCategoryUseCase, CategoryUseCase>();
         services.AddScoped<CategoryPresenter>();
 
         services.AddRepositories();

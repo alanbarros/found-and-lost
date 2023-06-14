@@ -64,3 +64,15 @@ public class ListCategoryRequest : BaseRequest
         MaybeCategoryName = categoryName is null ? Option.None<string>() : categoryName.Some();
     }
 }
+
+public class ReadCategoryRequest : BaseRequest
+{
+    public ReadCategoryRequest(Guid categoryId)
+    {
+        this.CategoryId = categoryId;
+
+    }
+    public Guid CategoryId { get; set; }
+
+
+}

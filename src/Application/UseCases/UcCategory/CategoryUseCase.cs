@@ -10,15 +10,13 @@ namespace Application.UseCases.UcCategory
         IAddCategoryUseCase,
         IUpdateCategoryUseCase,
         IDeleteCategoryUseCase,
-        IListCategoryUseCase
+        IListCategoryUseCase,
+        IReadCategoryUseCase
     {
         private readonly ICategoryRepository _repository;
-        private readonly IMapper _mapper;
 
-        public CategoryUseCase(ICategoryRepository repository,
-            IMapper mapper)
+        public CategoryUseCase(ICategoryRepository repository)
         {
-            _mapper = mapper;
             _repository = repository;
         }
 
@@ -42,24 +40,28 @@ namespace Application.UseCases.UcCategory
             .Match(some: (_) => outputPort.Standard("Removido com sucesso"),
             none: (ex) => outputPort.Fail(ex));
 
-        public void Execute(ListCategoryRequest input, IOutputPort<PaginationOutput<Category>> outputPort)
-        {
-            input.MaybeCategoryName.Match(
-                some: (categoryName) =>
-                {
-                    var items = _repository.List(c => c.Name.Contains(categoryName),
-                        input.Input);
+        public void Execute(ListCategoryRequest input, IOutputPort<PaginationOutput<Category>> outputPort) =>
+        input.MaybeCategoryName.Match(
+            some: (categoryName) =>
+            {
+                var items = _repository.List(c => c.Name.Contains(categoryName),
+                    input.Input);
 
-                    outputPort.Standard(items);
-                },
-                none: () =>
-                {
-                    var items = _repository.List(c => c.Name != null,
-                        input.Input);
+                outputPort.Standard(items);
+            },
+            none: () =>
+            {
+                var items = _repository.List(c => c.Name != null,
+                    input.Input);
 
-                    outputPort.Standard(items);
-                }
+                outputPort.Standard(items);
+            }
+        );
+
+        public void Execute(ReadCategoryRequest input, IOutputPort<Category> outputPort) =>
+            _repository.Find(input.CategoryId).Match(
+                some: (category) => outputPort.Standard(category),
+                none: () => outputPort.NotFound()
             );
-        }
     }
 }

@@ -16,7 +16,7 @@ namespace Infrastructure.Data.Repository
 
         protected DbContext Context { get; private set; }
         protected DbSet<TEntity> DbSet { get; private set; }
-        private readonly IMapper _mapper;
+        protected readonly IMapper _mapper;
 
         public BaseRepository(IMapper mapper)
         {

@@ -12,3 +12,4 @@ public interface IUpdateCategoryUseCase : IUseCase<UpdateCategoryRequest, Catego
 public interface IFindCategoryUseCase : IUseCase<FindCategoryRequest, Category> { }
 
 public interface IListCategoryUseCase : IUseCase<ListCategoryRequest, PaginationOutput<Category>> { }
+public interface IReadCategoryUseCase : IUseCase<ReadCategoryRequest, Category> { }
