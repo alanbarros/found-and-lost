@@ -76,3 +76,14 @@ public class ReadCategoryRequest : BaseRequest
 
 
 }
+public class UpdateParentCategoryRequest : BaseRequest
+{
+    public UpdateParentCategoryRequest(Guid categoryId, Guid parentId)
+    {
+        CategoryId = categoryId;
+        ParentId = parentId;
+    }
+    public Guid CategoryId { get; set; }
+    public Guid ParentId { get; set; }
+}
+

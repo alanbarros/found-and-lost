@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IDeleteCategoryUseCase, CategoryUseCase>();
         services.AddScoped<IListCategoryUseCase, CategoryUseCase>();
         services.AddScoped<IReadCategoryUseCase, CategoryUseCase>();
+        services.AddScoped<IUpdateParentCategoryUseCase, CategoryUseCase>();
         services.AddScoped<CategoryPresenter>();
 
         services.AddRepositories();

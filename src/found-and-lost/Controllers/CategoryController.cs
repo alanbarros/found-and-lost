@@ -20,6 +20,7 @@ public class CategoryController : ControllerBase
     private readonly IDeleteCategoryUseCase _useCaseDelete;
     private readonly IListCategoryUseCase _useCaseList;
     private readonly IReadCategoryUseCase _useCaseRead;
+    private readonly IUpdateParentCategoryUseCase _useCaseUpdateParent;
 
     public CategoryController(ILogger<CategoryController> logger,
      CategoryPresenter presenter,
@@ -28,7 +29,8 @@ public class CategoryController : ControllerBase
      IUpdateCategoryUseCase useCaseUpdate,
      IDeleteCategoryUseCase useCaseDelete,
      IListCategoryUseCase useCaseList,
-     IReadCategoryUseCase useCaseRead)
+     IReadCategoryUseCase useCaseRead,
+     IUpdateParentCategoryUseCase useCaseUpdateParent)
     {
         _logger = logger;
         _presenter = presenter;
@@ -38,6 +40,7 @@ public class CategoryController : ControllerBase
         _useCaseDelete = useCaseDelete;
         _useCaseList = useCaseList;
         _useCaseRead = useCaseRead;
+        _useCaseUpdateParent = useCaseUpdateParent;
     }
 
     [HttpPost]
@@ -89,6 +92,15 @@ public class CategoryController : ControllerBase
     {
         var category = new DeleteCategoryRequest(categoryId);
         _useCaseDelete.Execute(category, _presenter);
+
+        return _presenter.ViewModel;
+    }
+
+    [HttpPatch("{categoryId}")]
+    public IActionResult Patch(Guid categoryId, [FromForm] Guid parentId)
+    {
+        var request = new UpdateParentCategoryRequest(categoryId, parentId);
+        _useCaseUpdateParent.Execute(request, _presenter);
 
         return _presenter.ViewModel;
     }

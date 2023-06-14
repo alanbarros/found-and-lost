@@ -13,3 +13,4 @@ public interface IFindCategoryUseCase : IUseCase<FindCategoryRequest, Category> 
 
 public interface IListCategoryUseCase : IUseCase<ListCategoryRequest, PaginationOutput<Category>> { }
 public interface IReadCategoryUseCase : IUseCase<ReadCategoryRequest, Category> { }
+public interface IUpdateParentCategoryUseCase : IUseCase<UpdateParentCategoryRequest, Category, Exception> { }

@@ -27,6 +27,12 @@ public class Category : DefaultDbEntity<Domain.Entities.Category>
     public override void Update(Domain.Entities.Category domain)
     {
         this.Description = domain.Description;
+        this.UpdatedAt = DateTime.UtcNow;
+
+        if (domain.Parent != null && domain.Parent.Id != ParentId)
+        {
+            ParentId = domain.Parent.Id;
+        }
     }
 
     public override Domain.Entities.Category MapDomain(ResolutionContext context)

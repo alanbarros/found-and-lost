@@ -11,7 +11,8 @@ namespace Application.UseCases.UcCategory
         IUpdateCategoryUseCase,
         IDeleteCategoryUseCase,
         IListCategoryUseCase,
-        IReadCategoryUseCase
+        IReadCategoryUseCase,
+        IUpdateParentCategoryUseCase
     {
         private readonly ICategoryRepository _repository;
 
@@ -22,7 +23,12 @@ namespace Application.UseCases.UcCategory
 
         public void Execute(FindCategoryRequest request, IOutputPort<Category> outputPort) =>
             _repository.Find(c => c.Name.Contains(request.CategoryName))
-            .Match(some: category => outputPort.Standard(category),
+            .Match(some: category =>
+            {
+                category.Parent.SubCategories.Clear();
+
+                outputPort.Standard(category);
+            },
             none: () => outputPort.NotFound());
 
         public void Execute(AddCategoryRequest request, IOutputPort<Category> outputPort) =>
@@ -32,7 +38,12 @@ namespace Application.UseCases.UcCategory
 
         public void Execute(UpdateCategoryRequest request, IOutputPort<Category, Exception> outputPort) =>
             _repository.Update(request.IdCategory, request.Category)
-            .Match(some: (category) => outputPort.Standard(category),
+            .Match(some: (category) =>
+            {
+                category.Parent.SubCategories.Clear();
+
+                outputPort.Standard(category);
+            },
             none: (ex) => outputPort.Fail(ex));
 
         public void Execute(DeleteCategoryRequest request, IOutputPort<string, Exception> outputPort) =>
@@ -47,6 +58,16 @@ namespace Application.UseCases.UcCategory
                 var items = _repository.List(c => c.Name.Contains(categoryName),
                     input.Input);
 
+                items.Items.ForEach(item =>
+                {
+                    item.Parent?.SubCategories?.Clear();
+                    item.SubCategories.ForEach(subCategory =>
+                    {
+                        subCategory.Parent = null;
+                        subCategory.SubCategories = new();
+                    });
+                });
+
                 outputPort.Standard(items);
             },
             none: () =>
@@ -54,14 +75,59 @@ namespace Application.UseCases.UcCategory
                 var items = _repository.List(c => c.Name != null,
                     input.Input);
 
+                items.Items.ForEach(item =>
+                {
+                    item.Parent?.SubCategories?.Clear();
+                    item.SubCategories.ForEach(subCategory =>
+                    {
+                        subCategory.Parent = null;
+                        subCategory.SubCategories = new();
+                    });
+                });
+
                 outputPort.Standard(items);
             }
         );
 
         public void Execute(ReadCategoryRequest input, IOutputPort<Category> outputPort) =>
-            _repository.Find(input.CategoryId).Match(
-                some: (category) => outputPort.Standard(category),
+            _repository.GetWithParentAndSubcategories(input.CategoryId).Match(
+                some: (category) =>
+                {
+                    category.Parent?.SubCategories?.Clear();
+
+                    category.SubCategories.ForEach(subCategory =>
+                    {
+                        subCategory.Parent = null;
+                        subCategory.SubCategories?.Clear();
+                    });
+
+                    outputPort.Standard(category);
+                },
                 none: () => outputPort.NotFound()
             );
+
+        public void Execute(UpdateParentCategoryRequest input, IOutputPort<Category, Exception> outputPort) =>
+            _repository.Find(input.CategoryId).Match(
+                some: (category) =>
+                {
+                    _repository.Find(input.ParentId).Match(
+                        some: (parent) =>
+                        {
+                            category.Parent = parent;
+
+                            _repository.Update(input.CategoryId, category)
+                                .Match(
+                                    some: (updatedCategory) =>
+                                    {
+                                        updatedCategory.Parent.SubCategories = new();
+
+                                        outputPort.Standard(updatedCategory);
+                                    },
+                                    none: (ex) => outputPort.Fail(ex));
+                        },
+                        none: () => outputPort.NotFound()
+                    );
+                },
+                none: () => outputPort.NotFound());
     }
 }
