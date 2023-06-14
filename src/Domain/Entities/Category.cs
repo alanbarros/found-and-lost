@@ -24,4 +24,26 @@ public class Category : BaseDomain
         Parent = parent;
         SubCategories = subCategories;
     }
+
+    /// <summary>
+    /// Limpa o Parent e as Subcategories
+    /// </summary>
+    public void ClearParentAndSubcategories()
+    {
+        SubCategories = new List<Category>();
+        Parent = null;
+    }
+
+    public void ClearParent()
+    {
+        Parent = null;
+    }
+
+    /// <summary>
+    /// Limpa o Parent e as Subcategories das Subcategories
+    /// </summary>
+    public void ClearSubcategoriesParentsAndSubCategories()
+    {
+        SubCategories?.ForEach(c => c.ClearParentAndSubcategories());
+    }
 }

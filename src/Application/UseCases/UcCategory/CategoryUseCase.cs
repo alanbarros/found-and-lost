@@ -25,7 +25,7 @@ namespace Application.UseCases.UcCategory
             _repository.Find(c => c.Name.Contains(request.CategoryName))
             .Match(some: category =>
             {
-                category.Parent.SubCategories.Clear();
+                category.Parent?.ClearParentAndSubcategories();
 
                 outputPort.Standard(category);
             },
@@ -40,7 +40,7 @@ namespace Application.UseCases.UcCategory
             _repository.Update(request.IdCategory, request.Category)
             .Match(some: (category) =>
             {
-                category.Parent.SubCategories.Clear();
+                category.Parent?.ClearParentAndSubcategories();
 
                 outputPort.Standard(category);
             },
@@ -60,12 +60,8 @@ namespace Application.UseCases.UcCategory
 
                 items.Items.ForEach(item =>
                 {
-                    item.Parent?.SubCategories?.Clear();
-                    item.SubCategories.ForEach(subCategory =>
-                    {
-                        subCategory.Parent = null;
-                        subCategory.SubCategories = new();
-                    });
+                    item.Parent?.ClearParentAndSubcategories();
+                    item.ClearSubcategoriesParentsAndSubCategories();
                 });
 
                 outputPort.Standard(items);
@@ -77,12 +73,8 @@ namespace Application.UseCases.UcCategory
 
                 items.Items.ForEach(item =>
                 {
-                    item.Parent?.SubCategories?.Clear();
-                    item.SubCategories.ForEach(subCategory =>
-                    {
-                        subCategory.Parent = null;
-                        subCategory.SubCategories = new();
-                    });
+                    item.Parent?.ClearParentAndSubcategories();
+                    item.ClearSubcategoriesParentsAndSubCategories();
                 });
 
                 outputPort.Standard(items);
@@ -93,13 +85,9 @@ namespace Application.UseCases.UcCategory
             _repository.GetWithParentAndSubcategories(input.CategoryId).Match(
                 some: (category) =>
                 {
-                    category.Parent?.SubCategories?.Clear();
+                    category.Parent?.ClearParentAndSubcategories();
 
-                    category.SubCategories.ForEach(subCategory =>
-                    {
-                        subCategory.Parent = null;
-                        subCategory.SubCategories?.Clear();
-                    });
+                    category.ClearSubcategoriesParentsAndSubCategories();
 
                     outputPort.Standard(category);
                 },
@@ -119,7 +107,8 @@ namespace Application.UseCases.UcCategory
                                 .Match(
                                     some: (updatedCategory) =>
                                     {
-                                        updatedCategory.Parent.SubCategories = new();
+                                        updatedCategory.Parent?.ClearParentAndSubcategories();
+                                        updatedCategory.ClearSubcategoriesParentsAndSubCategories();
 
                                         outputPort.Standard(updatedCategory);
                                     },
